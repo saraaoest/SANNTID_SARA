@@ -1,0 +1,2 @@
+comment inn and out VS ubuntu:
+ctrl ?/
