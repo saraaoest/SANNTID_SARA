@@ -1,0 +1,36 @@
+make SSH only first time on computer:
+TERMINAL:
+ssh-keygen -t rsa -b 4096 -C "sara.ostnor@gmail.com"  
+cat ~/.ssh/id_rsa.pub
+    : ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDeoeAkG8JL69vR/gzcfB9Pl8e7fWl42K1ceeKbu7mdNPv9xVGtZSKI11t51m7FCzMBAdcKp7jn7xBHahJD9IQpomk5JMprioAZOCMKRLLwZT/OPcE5Ew08o9HS5RdoHlGABKllH6lC3biYsbDD1eisZy1feDvTlNIz+6Rz4pdoFnkB3CC29wJD0zOsCLd3mA8JWnDYtNG3zBdk3I2X7Y+DI/
+    annwt+CURXKkJKsvNpO4H4yE9mwIgsGyxMt9+Oln6dQEe5tqoEl57J05MEX4iZkb3/3xtsBgB4aE9Jv+ayi+yoWScbnldPTDxybYbw3ft/4RYWDh+e7GQr+deTD0K2+4ruZCNkNuLQrE2KIQD7VEVMUlR6bO2GuESZlPuy302wDuzMRpThnwaXTKJV4aIK6ZNBthKCmhezQICJyg+vDihCUKGBiQgPvS0z3tbuiOKK4OQNxJD+aZdh/PAA+PpzLoHeW2fLE3KZKnXMyslNuqTpcj2YxHmUHGxtT4wI1DGU11QvSdVClZLPtsDleIPRmxD2lJOUekKX5Kh2F5LTG3Pr8pHk0l0XfvT2wzFmXJ21tc+uRLZ9uwE/q4ahfZizaflnPVs0gJpCV0H3BDTc2vnW4wlUgQW0/m7A4reDZphltAcW7VSLXqMZBzfbkmtXUwuJsdP7hyJksaJqDv/PjQ== sara.ostnor@gmail.com
+GITHUB:
+ssh: paste what was made from the last terminal command into the key field, and make the ssh key
+
+make project:
+TERMINAL:
+git init
+git remote add origin git@github.com:YOUR-USERNAME/REPO-NAME.git
+git add -A
+git commit -m "Initial commit"
+git push -u origin master
+
+HTTPS to SSH
+If you've already set up the remote using HTTPS and want to switch to SSH, git remote add origin https://github.com/YOUR-USERNAME/REPO-NAME.git, use:
+git remote set-url origin git@github.com:YOUR-USERNAME/REPO-NAME.git
+
+normal:
+git add -A
+git commit -m "..."
+git push 
+
+add other repositoryes:
+TERMINAL:
+git submodule add <repo-url> "folder path"
+    exs: git submodule add https://github.com/mokamv/Heislab.git "Exercise_2/Exercise 2 git/Heislab"
+    # to find <repo-url>, run: git remote -v, in the Heislab folder
+git commit -m "Added submodules"
+
+
+
+

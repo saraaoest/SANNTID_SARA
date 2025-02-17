@@ -1,0 +1,6 @@
+is the server only the program running the code to inteface with the arduino?
+
+why events first then state in the elevie exs code
+watch the event-handler
+
+to next time, what do they mean by distrebuting the requests or button presses

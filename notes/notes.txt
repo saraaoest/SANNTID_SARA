@@ -1,0 +1,43 @@
+Async Rust
+https://rust-lang.github.io/async-book/part-guide/concurrency.html
+
+QUESTIONS
+Asyncrounus IO insteas of blocking IO
+-Blocking IO in a concurrent system with threads and non-blocking IO in an async concurrent system are similar. 
+-In both cases, IO takes time and other work gets done while the IO is happening:
+
+Is socket in c++ like command child thing in rust? comunication between two programs on one network. Or is socket something else?
+
+NOTES
+concurrency: one core many programs/tasks
+parallelism: multiple cores many task/programs
+"Concurrency is a way of organizing code and parallelism is a resource."
+
+difference between processes/ sequetial, threads and async tasks:
+Async programming is an alternative to programming with processes and threads
+some programs uses both. 
+
+One program can be multiple processes, one prosess can have multiple threads
+- Memmory is shared between threads not(most often) between processes(message passing) 
+Cheduling:
+when the os decides the switching(time-slicing) between what thread to run on the core, often more threads than cores
+Context switching = the OS pauses a thread and start another is called context switching = expensive operation with lot of register flipping
+dont use bussy wait, while other threads cant run, not efficient
+OBS: not all hardware or OS supports threads and processes
+
+Async programming is an alternative to programming with processes and threads
+Async programming:
+WRONG: only concurrency: can't use multiple cores with only async
+- can use both concurrency and paralellism with async programming
+no help from OS(scheduler)
+Tasks:  instead of threads, tasks are managed entierly within the program rather than by OS, 
+cooperative multitasking: Still a scheduler, but it can't pre-emptive the task, the task must give up controll and alow other tasks to be scheduled
+- cooperative multitasking, not pre-emptive like threads
+MUCH MORE EFFICIENT! with async concurrency than concurrency with threads: much lower mamory overhead --> switching is much cheaper
+- but cant garantie the data required by the newly scheduled task, may not be in cache, but other places in memory
+Asyncrounus IO is used with the async runntime liberarry   
+
+
+Functions
+sleep() //a thread can pause itself by
+
