@@ -32,14 +32,30 @@ fn primary() {
 
     let mut child = Command::new(command)
         .args(args)
-        //.stdin(Stdio::piped())  
-        //.stdout(Stdio::piped()) 
         .spawn()
         .expect("Failed to launch terminal");
     
     
     //let socket = UdpSocket::bind("0.0.0.0:30000").expect("couldn't bind to address");
     //let socket = UdpSocket::bind("127.0.0.1:1234").expect("couldn't bind to address");
+    let socket = UdpSocket::bind("127.0.0.1:0").unwrap();
+    let mut count = 0;
+    loop{
+        socket.send_to(&[0; 1024], "127.0.0.1:0").expect("couldn't send data");
+        
+        sleep(Duration::from_secs(1));
+        count += 1;
+        println!("{}", count);
+
+        // if count == 20 {
+        //     panic!("Process crashed!");
+        // }
+    }
+}
+
+fn backup(){
+    println!("Backup mode activated.");
+
     let socket = UdpSocket::bind("127.0.0.1:0").unwrap();
 
     loop {
@@ -53,37 +69,7 @@ fn primary() {
         println!("Received {} bytes from {:?}", len, src);
         println!("Data: {:?}", String::from_utf8_lossy(&buf[..len]));
     }
-    
-    // {
-    //     let stdin = child.stdin.as_mut().expect("Failed to open stdin");
-    //     stdin.write_all(b"hello world").expect("Failed to write to stdin");
-    // } // `stdin` is closed here automatically
 
-    // let mut output = String::new();
-    // child.stdout.as_mut().expect("Failed to open stdout")
-    //     .read_to_string(&mut output)
-    //     .expect("Failed to read stdout");
-
-    // let status = child.wait().expect("Failed to wait on child");
-    // if status.success() {
-    //     println!("Responded: {}", output);
-    // } else {
-    //     println!("Process failed");
-    // }    
-
-    let mut count = 0;
-    loop{
-        sleep(Duration::from_secs(1));
-        count += 1;
-        println!("{}", count);
-        if count == 20 {
-            panic!("Process crashed!");
-        }
-    }
-}
-
-fn backup(){
-    println!("Backup mode activated.");
     sleep(Duration::from_secs(10));
 }
 
