@@ -1,9 +1,9 @@
-use std::process::Command; //Stdio
-//use std::io::{Write, Read};
+use std::process::Command; 
 use std::thread::sleep;
 use std::time::Duration;
 use std::env;
 use std::net::UdpSocket;
+use std::thread;
 
 //start program:
 // cargo run -- a
@@ -21,8 +21,37 @@ fn main() {
             _ => println!("Invalid argument. Use 'a' or 'b'."),
         }
     } else {
-        println!("Usage: cargo run -- (a|b)");
+        println!("Usage: cargo run --(a/b)");
     }
+
+   
+
+    // let handler1 = thread::spawn(|| {
+    //     let mut i = 1;
+    //     loop {
+    //         primary();
+    //         // println!("hi number {i} from the spawned thread!");
+    //         // i = i + 1;
+    //         thread::sleep(Duration::from_secs(10));
+            
+    //     }
+    // });
+
+    // let handler2 = thread::spawn(|| {
+    //     let mut i = 1;
+    //     loop{
+    //         backup()
+    //         // println!("hi number {i} from the main thread!");
+    //         // i = i + 1;
+    //         thread::sleep(Duration::from_secs(10));
+    //     }
+    // });    
+    
+    // handler1.join().unwrap();
+    // handler2.join().unwrap();
+
+    
+
 }
 
 fn primary() {
@@ -30,47 +59,44 @@ fn primary() {
     let command = "x-terminal-emulator";  
     let args = vec!["-e", "bash", "-c", "cargo run -- b; exec bash"];
 
-    let mut child = Command::new(command)
+    Command::new(command)
         .args(args)
         .spawn()
         .expect("Failed to launch terminal");
-    
-    
-    //let socket = UdpSocket::bind("0.0.0.0:30000").expect("couldn't bind to address");
-    //let socket = UdpSocket::bind("127.0.0.1:1234").expect("couldn't bind to address");
-    let socket = UdpSocket::bind("127.0.0.1:0").unwrap();
-    let mut count = 0;
-    loop{
-        socket.send_to(&[0; 1024], "127.0.0.1:0").expect("couldn't send data");
-        
-        sleep(Duration::from_secs(1));
-        count += 1;
-        println!("{}", count);
 
-        // if count == 20 {
-        //     panic!("Process crashed!");
-        // }
+    let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind primary socket"); // Use an ephemeral port
+    socket.set_broadcast(true).expect("Couldn't set broadcast");
+    
+    let id = "255.255.255.255:1234";
+    //let id = "127.0.0.1:1234"; // last must not be over ca. 3000 
+    //let socket = UdpSocket::bind("0.0.0.0:30000").expect("couldn't bind to address");
+    //let socket = UdpSocket::bind(id).unwrap();
+    //let mut count: [u8; 10] = [0; 10]; //array of 10 bytes
+
+    let message = b"Hello from Primary";
+
+    loop{
+        //socket.send_to(&count, id).expect("couldn't send data");
+        socket.send_to(message, id).expect("couldn't send data");
+        println!("Primary sent: {}", String::from_utf8_lossy(message));
+        sleep(Duration::from_secs(10));
     }
 }
 
 fn backup(){
     println!("Backup mode activated.");
 
-    let socket = UdpSocket::bind("127.0.0.1:0").unwrap();
-
+    let socket = UdpSocket::bind("0.0.0.0:1234").unwrap(); // must listen on 0.0.0.0
+    let mut buf: [u8; 10] = [0; 10];
     loop {
-        // Create a buffer to receive data
-        let mut buf = [0; 1024];
-
-        // Receive data from the socket
-        let (len, src) = socket.recv_from(&mut buf)?;
+        let (len, src) = socket.recv_from(&mut buf).expect("Didn't receive data"); // Receive data from the socket
 
         // Print the received data and source address
-        println!("Received {} bytes from {:?}", len, src);
-        println!("Data: {:?}", String::from_utf8_lossy(&buf[..len]));
+        // println!("Received {} bytes from {:?}", len, src);
+        // println!("Data: {:?}", String::from_utf8_lossy(&buf[..len]));
+        println!("Backup received '{}' from {}", String::from_utf8_lossy(&buf[..len]), src);
+        sleep(Duration::from_secs(1));
     }
-
-    sleep(Duration::from_secs(10));
 }
 
 
