@@ -41,3 +41,34 @@ Asyncrounus IO is used with the async runntime liberarry
 Functions
 sleep() //a thread can pause itself by
 
+
+
+
+
+
+CROSSBEAM-CANAL:
+En crossbeam-kanal er en trådsikker meldingskø som lar flere tråder kommunisere med hverandre uten å bruke låsing (Mutex). Dette er en del av Crossbeam-biblioteket i Rust, som gir effektive og fleksible kanaler for samtidighet.
+I Rust er kanaler (channels) en vanlig måte å sende data mellom tråder på, og crossbeam-channel er et populært alternativ til standardkanalen i Rust (std::sync::mpsc).
+
+Hvorfor bruke crossbeam-kanaler?
+✔ Trådsikker kommunikasjon – unngår datafeil uten Mutex.
+✔ Høy ytelse – crossbeam er mer effektiv enn Rusts standardkanal.
+✔ Blokkerende & ikke-blokkerende operasjoner tilgjengelig.
+✔ Brukervennlig API – enklere enn å bruke Arc<Mutex<T>>.
+
+use std::thread;
+use std::time::Duration;
+
+fn main() {
+    let handle = thread::spawn(|| {
+        thread::sleep(Duration::from_secs(2));
+        println!("Jeg er ferdig!");
+    });
+
+    handle.join().expect("Tråden feilet!"); // Hovedtråden venter på denne
+    println!("Hovedtråd avsluttes etter at den andre er ferdig ✅");
+}
+
+🔹 Her avsluttes ikke main() før den andre tråden er ferdig.
+
+
