@@ -52,7 +52,52 @@ void deallocate(){
         Signal(M);
     }
 }
+
+
 ```
+```C sara sugestion:
+// Initial values:
+// M     = 1          //semaphore - binary // Mutex for busy
+                      //sjekker at bere èn om gagen kan skjekke og endre busy
+// PS[2] = [0, 0]     //also semaphore // mutex for the shared variable!
+// busy  = false      //shared resource in use
+
+// priority: 1=high, 0=low
+void allocate(int priority){
+    Wait(M); //loop then M-- // låser M med mutex
+    if(busy){
+        Signal(M); //M ++
+        Wait(PS[priority]); //loop og PS[priority]--
+        Wait(M);
+    }
+    busy = true;
+    Signal(M);
+}
+
+void deallocate(){ //prioriterer alltid PS[1]?
+    Wait(M); //loop then M-- --> setter felles reasource (busy) to opptatt
+    busy = false;
+    if(GetValue(PS[1]) < 0){
+        Signal(PS[1]); //PS[1] ++
+    } else if(GetValue(PS[0]) < 0){
+        Signal(PS[0]); //PS[0] ++
+    }
+    Signal(M); //M++ //frigjør busy
+}
+```
+definitions:
+```C
+  wait(Semaphore S){
+    while S<=0
+      ; //no operation
+    S--;
+  }
+
+  signal(S){
+    S++;
+  }
+```
+
 
 To briefly narrativize this (buggy) solution: When allocating, the resource is either in use (`busy`) or not. If it is in use, we wait at the appropriate priority semaphore (`PS`), and the job of handing over the resource falls to whoever deallocates it. When deallocating, we first check for high-priority waiters, then low-priority, and then finally do nothing if there are neither. The operations manipulating the priority queues are protected with an outer mutex (`M`).
 

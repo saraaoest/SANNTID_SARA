@@ -1,3 +1,4 @@
+//rdmd condvar.d
 
 import std.algorithm, std.concurrency, std.format, std.range, std.stdio, std.traits;
 import core.thread, core.sync.mutex, core.sync.condition;
@@ -40,11 +41,27 @@ class Resource(T) {
     }
     
     T allocate(int id, int priority){
+        mtx.lock();
+        queue.insert(id,priority);
+
+        while(queue.front() != id){
+            cond.wait();
+        }
+
+        mtx.unlock();
         return value;
     }
     
     void deallocate(T v){
+        mtx.lock();
         value = v;
+
+        queue.popFront();
+        cond.notifyAll();
+        
+
+        mtx.unlock();
+        
     }
 }
 

@@ -1,2 +1,4 @@
 comment inn and out VS ubuntu:
 ctrl shift + 7
+
+APT: used for installing stuff

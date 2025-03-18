@@ -1,3 +1,4 @@
+// rdmd semaphore.d
 
 import std.algorithm, std.concurrency, std.format, std.range, std.stdio, std.traits;
 import core.thread, core.sync.semaphore, core.sync.mutex, core.sync.condition;
@@ -33,10 +34,36 @@ class Resource(T) {
     }
     
     T allocate(int priority){
+        mtx.wait(); //loop then M-- // låser M med mutex
+        if(busy){
+            numWaiting[priority] ++;
+            mtx.notify();
+            sems[priority].wait(); //can cause race conditions...???
+            busy = true;
+
+        } else{
+            busy = true;
+            mtx.notify();
+        }
+
+        //mtx.notify();
         return value;
+        
     }
     
     void deallocate(T v){
+        mtx.wait();
+
+        busy = false;
+        if(numWaiting[1] > 0){
+            sems[1].notify();
+            numWaiting[1] --; //releases a waiting task
+        }else if(numWaiting[0] > 0){
+            sems[0].notify();
+            numWaiting[0] --;
+        } 
+
+        mtx.notify();
         value = v;
     }
 }
